@@ -91,9 +91,6 @@ if (NOT DEFINED Boost_ADDITIONAL_VERSIONS)
                                  "1.59" "1.58" "1.57" "1.56" "1.55"
                                  "1.54" "1.53")
 endif ()
-if (LINKSTATIC)
-    set (Boost_USE_STATIC_LIBS   ON)
-endif ()
 set (Boost_USE_MULTITHREADED ON)
 if (BOOST_CUSTOM)
     set (Boost_FOUND true)
@@ -104,8 +101,7 @@ else ()
     if (NOT USE_STD_REGEX)
         list (APPEND Boost_COMPONENTS regex)
     endif ()
-    find_package (Boost 1.53 REQUIRED
-                  COMPONENTS ${Boost_COMPONENTS})
+    find_package (Boost 1.53 REQUIRED COMPONENTS ${Boost_COMPONENTS})
 endif ()
 
 # On Linux, Boost 1.55 and higher seems to need to link against -lrt

@@ -14,7 +14,7 @@ if (Qt5_FOUND AND OPENGL_FOUND AND GLEW_FOUND)
     target_link_libraries (iv OpenImageIO
                                Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL
                                ${OPENGL_LIBRARIES}
-                               ${Boost_LIBRARIES} ${CMAKE_DL_LIBS}
+                               ${CMAKE_DL_LIBS}
                                ${GLEW_LIBRARIES})
     oiio_install_targets (iv)
 

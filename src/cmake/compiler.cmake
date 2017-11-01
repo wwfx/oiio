@@ -10,10 +10,9 @@ set (USE_SIMD "" CACHE STRING "Use SIMD directives (0, sse2, sse3, ssse3, sse4.1
 option (STOP_ON_WARNING "Stop building if there are any compiler warnings" ON)
 option (HIDE_SYMBOLS "Hide symbols not in the public API" OFF)
 option (USE_CCACHE "Use ccache if found" ON)
-option (USE_fPIC "Build with -fPIC")
 set (EXTRA_CPP_ARGS "" CACHE STRING "Extra C++ command line definitions")
 set (EXTRA_DSO_LINK_ARGS "" CACHE STRING "Extra command line definitions when building DSOs")
-option (BUILDSTATIC "Build static libraries instead of shared" OFF)
+option (BUILD_SHARED_LIBS "Build shared libraries instead of static" OFF)
 option (LINKSTATIC  "Link with static external libraries when possible" OFF)
 option (CODECOV "Build code coverage tests" OFF)
 set (SANITIZE "" CACHE STRING "Build code using sanitizer (address, thread)")
@@ -219,12 +218,6 @@ if (NOT USE_SIMD STREQUAL "")
     add_definitions (${SIMD_COMPILE_FLAGS})
 endif ()
 
-
-if (USE_fPIC)
-    add_definitions ("-fPIC")
-endif ()
-
-
 # Test for features
 if (NOT VERBOSE)
     set (CMAKE_REQUIRED_QUIET 1)
@@ -302,9 +295,8 @@ if (EXTRA_CPP_ARGS)
 endif()
 
 
-if (BUILDSTATIC)
+if (NOT ${BUILD_SHARED_LIBS})
     message (STATUS "Building static libraries")
-    set (LIBRARY_BUILD_TYPE STATIC)
     add_definitions(-D${PROJ_NAME}_STATIC_BUILD=1)
     if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         # On Linux, the lack of -fPIC when building static libraries seems
@@ -312,24 +304,22 @@ if (BUILDSTATIC)
         set (USE_PYTHON OFF)
         set (USE_PYTHON3 OFF)
     endif ()
-else ()
-    set (LIBRARY_BUILD_TYPE SHARED)
-endif()
+endif ()
+
 
 # Use .a files if LINKSTATIC is enabled
 if (LINKSTATIC)
-    set (_orig_link_suffixes ${CMAKE_FIND_LIBRARY_SUFFIXES})
     message (STATUS "Statically linking external libraries")
     if (WIN32)
         set (CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
     else ()
         set (CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
     endif ()
-    add_definitions (-DBoost_USE_STATIC_LIBS=1)
-    set (Boost_USE_STATIC_LIBS 1)
+
+    add_definitions(-DPTEX_STATIC)
+    add_definitions(-DGLEW_STATIC)
 else ()
     if (MSVC)
-        add_definitions (-DBOOST_ALL_DYN_LINK)
         add_definitions (-DOPENEXR_DLL)
     endif ()
 endif ()

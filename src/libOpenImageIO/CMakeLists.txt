@@ -94,11 +94,7 @@ endif ()
 source_group ("libutil"    REGULAR_EXPRESSION ".+/libutil/.+")
 source_group ("libtexture" REGULAR_EXPRESSION ".+/libtexture/.+")
 
-if (BUILDSTATIC)
-    add_library (OpenImageIO STATIC ${libOpenImageIO_srcs})
-else ()
-    add_library (OpenImageIO SHARED ${libOpenImageIO_srcs})
-endif ()
+add_library (OpenImageIO ${libOpenImageIO_srcs})
 
 # if (SANITIZE AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 #     # target_link_libraries (OpenImageIO "asan" "ubsan")
@@ -106,10 +102,11 @@ endif ()
 # endif ()
 
 target_link_libraries (OpenImageIO
-                       ${SANITIZE_LIBRARIES}
-                       ${format_plugin_libs} # Add all the target link libraries from the plugins
-                       ${Boost_LIBRARIES})
-
+    ${SANITIZE_LIBRARIES}
+    ${format_plugin_libs} # Add all the target link libraries from the plugins
+    ${Boost_LIBRARIES}
+    Boost::disable_autolinking
+)
 
 # Include OpenColorIO if using it
 if (USE_OCIO AND OCIO_FOUND)
@@ -200,33 +197,32 @@ if (OIIO_BUILD_TESTS)
 
     add_executable (imagebuf_test imagebuf_test.cpp)
     set_target_properties (imagebuf_test PROPERTIES FOLDER "Unit Tests")
-    target_link_libraries (imagebuf_test OpenImageIO ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
+    target_link_libraries (imagebuf_test OpenImageIO ${CMAKE_DL_LIBS})
     add_test (unit_imagebuf imagebuf_test)
 
     add_executable (imagecache_test imagecache_test.cpp)
     set_target_properties (imagecache_test PROPERTIES FOLDER "Unit Tests")
-    target_link_libraries (imagecache_test OpenImageIO ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
+    target_link_libraries (imagecache_test OpenImageIO ${CMAKE_DL_LIBS})
     add_test (unit_imagecache imagecache_test)
 
     add_executable (imagebufalgo_test imagebufalgo_test.cpp)
     set_target_properties (imagebufalgo_test PROPERTIES FOLDER "Unit Tests")
-    target_link_libraries (imagebufalgo_test OpenImageIO ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
+    target_link_libraries (imagebufalgo_test OpenImageIO ${CMAKE_DL_LIBS})
     add_test (unit_imagebufalgo imagebufalgo_test)
 
     add_executable (imagespec_test imagespec_test.cpp)
     set_target_properties (imagespec_test PROPERTIES FOLDER "Unit Tests")
-    target_link_libraries (imagespec_test OpenImageIO ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
+    target_link_libraries (imagespec_test OpenImageIO ${CMAKE_DL_LIBS})
     add_test (unit_imagespec imagespec_test)
     
     add_executable (imagespeed_test imagespeed_test.cpp)
     set_target_properties (imagespeed_test PROPERTIES FOLDER "Unit Tests")
-    target_link_libraries (imagespeed_test OpenImageIO ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
+    target_link_libraries (imagespeed_test OpenImageIO ${CMAKE_DL_LIBS})
     #add_test (imagespeed_test imagespeed_test)
 
     add_executable (compute_test compute_test.cpp)
     set_target_properties (compute_test PROPERTIES FOLDER "Unit Tests")
-    target_link_libraries (compute_test OpenImageIO ${Boost_LIBRARIES}
-                           ${CMAKE_DL_LIBS})
+    target_link_libraries (compute_test OpenImageIO ${CMAKE_DL_LIBS})
     add_test (unit_compute compute_test)
 
 endif (OIIO_BUILD_TESTS)
