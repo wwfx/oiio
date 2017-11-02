@@ -10,6 +10,7 @@ set (USE_SIMD "" CACHE STRING "Use SIMD directives (0, sse2, sse3, ssse3, sse4.1
 option (STOP_ON_WARNING "Stop building if there are any compiler warnings" ON)
 option (HIDE_SYMBOLS "Hide symbols not in the public API" OFF)
 option (USE_CCACHE "Use ccache if found" ON)
+option (CMAKE_POSITION_INDEPENDENT_CODE "Use -fPIC" ON)
 set (EXTRA_CPP_ARGS "" CACHE STRING "Extra C++ command line definitions")
 set (EXTRA_DSO_LINK_ARGS "" CACHE STRING "Extra command line definitions when building DSOs")
 option (BUILD_SHARED_LIBS "Build shared libraries instead of static" OFF)
